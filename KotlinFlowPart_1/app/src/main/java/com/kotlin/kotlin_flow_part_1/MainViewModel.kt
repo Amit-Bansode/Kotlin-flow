@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.fold
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
@@ -19,7 +21,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class MainViewModel : ViewModel() {
     val countDownTimer = flow<Int> {
-        val startingValue = 4
+        val startingValue = 5
         emit(startingValue)
         var currentValue = startingValue
         while (currentValue > 0) {
@@ -29,14 +31,28 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    val elements = flowOf(10, 20, 30)
+
+
     init {
-        getCountdownTime()
+//        getCountdownTime()
+        getElements()
     }
 
     fun getCountdownTime() {
         viewModelScope.launch {
+            //fold takes initial value and then accumulate with value
+            val count = countDownTimer.fold(5) { accumulator, value ->
+                Log.d("TAG", "getCountdownTime: $accumulator:$value")
+                accumulator + value
+            }
+            Log.d("TAG", "reduce accumulator: $count")
+        }
+    }
 
-            val count = countDownTimer.reduce { accumulator, value ->
+    fun getElements() {
+        viewModelScope.launch {
+            val count = elements.fold(10) { accumulator, value ->
                 Log.d("TAG", "getCountdownTime: $accumulator:$value")
                 accumulator + value
             }
