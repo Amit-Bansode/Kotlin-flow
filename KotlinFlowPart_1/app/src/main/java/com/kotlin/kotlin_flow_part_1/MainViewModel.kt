@@ -13,12 +13,13 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.reduce
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 class MainViewModel : ViewModel() {
     val countDownTimer = flow<Int> {
-        val startingValue = 10
+        val startingValue = 4
         emit(startingValue)
         var currentValue = startingValue
         while (currentValue > 0) {
@@ -35,34 +36,11 @@ class MainViewModel : ViewModel() {
     fun getCountdownTime() {
         viewModelScope.launch {
 
-            val count = countDownTimer
-                .filter {
-                    it % 2 == 0
-                }
-                .map {
-                    it * it
-                }
-                .onStart {
-                    Log.d("count", "getCountdownTime: Started")
-                    emit(-1)
-                }
-                .onEach {
-                    Log.d("count", "getCountdownTime: onEach $it")
-                }
-                .onEmpty {
-                    Log.d("count", "getCountdownTime: Empty")
-                }
-                .onCompletion {
-                    Log.d("count", "getCountdownTime: Completed")
-                }
-                .count {
-                    it % 2 == 0
-                }
-                // operator after count will not work
-
-            Log.d("count", "getCountdownTime: $count")
+            val count = countDownTimer.reduce { accumulator, value ->
+                Log.d("TAG", "getCountdownTime: $accumulator:$value")
+                accumulator + value
+            }
+            Log.d("TAG", "reduce accumulator: $count")
         }
-
-
     }
 }
