@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.reduce
+import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -52,9 +53,12 @@ class MainViewModel : ViewModel() {
 
     fun getElements() {
         viewModelScope.launch {
-            val count = elements.fold(10) { accumulator, value ->
+            val count = elements.scan(10) { accumulator, value ->
+                delay(1000.milliseconds)
                 Log.d("TAG", "getCountdownTime: $accumulator:$value")
                 accumulator + value
+            }.collect {
+                Log.d("TAG", "getElements: $it")
             }
             Log.d("TAG", "reduce accumulator: $count")
         }
