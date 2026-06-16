@@ -68,8 +68,8 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             flow.onEach {
                 Log.d("TAG", "collectFlow: $it is delivered")
-            }.conflate()
-                .collect {
+            }
+                .collectLatest {
                     Log.d("TAG", "collectFlow: Now eating $it")
                     delay(5000L)
                     Log.d("TAG", "collectFlow: Finished eating $it")
@@ -122,3 +122,22 @@ class MainViewModel : ViewModel() {
         }
     }
 }
+//Conflate
+//2026-06-16 18:00:57.247 24187-24187 TAG                     com.kotlin.kotlin_flow_part_1        D  collectFlow: Appetizer is delivered
+//2026-06-16 18:00:57.247 24187-24187 TAG                     com.kotlin.kotlin_flow_part_1        D  collectFlow: Now eating Appetizer
+//2026-06-16 18:00:58.748 24187-24187 TAG                     com.kotlin.kotlin_flow_part_1        D  collectFlow: Main dish is delivered
+//2026-06-16 18:00:59.249 24187-24187 TAG                     com.kotlin.kotlin_flow_part_1        D  collectFlow: Dessert is delivered
+//2026-06-16 18:01:02.249 24187-24187 TAG                     com.kotlin.kotlin_flow_part_1        D  collectFlow: Finished eating Appetizer
+//2026-06-16 18:01:02.249 24187-24187 TAG                     com.kotlin.kotlin_flow_part_1        D  collectFlow: Now eating Dessert
+//2026-06-16 18:01:07.255 24187-24187 TAG                     com.kotlin.kotlin_flow_part_1        D  collectFlow: Finished eating Dessert
+
+//Collect latest
+//---------------------------- PROCESS ENDED (24187) for package com.kotlin.kotlin_flow_part_1 ----------------------------
+//---------------------------- PROCESS STARTED (24305) for package com.kotlin.kotlin_flow_part_1 ----------------------------
+//2026-06-16 18:14:20.140 24305-24305 TAG                     com.kotlin.kotlin_flow_part_1        D  collectFlow: Appetizer is delivered
+//2026-06-16 18:14:20.140 24305-24305 TAG                     com.kotlin.kotlin_flow_part_1        D  collectFlow: Now eating Appetizer
+//2026-06-16 18:14:21.644 24305-24305 TAG                     com.kotlin.kotlin_flow_part_1        D  collectFlow: Main dish is delivered
+//2026-06-16 18:14:21.645 24305-24305 TAG                     com.kotlin.kotlin_flow_part_1        D  collectFlow: Now eating Main dish
+//2026-06-16 18:14:22.147 24305-24305 TAG                     com.kotlin.kotlin_flow_part_1        D  collectFlow: Dessert is delivered
+//2026-06-16 18:14:22.148 24305-24305 TAG                     com.kotlin.kotlin_flow_part_1        D  collectFlow: Now eating Dessert
+//2026-06-16 18:14:27.151 24305-24305 TAG                     com.kotlin.kotlin_flow_part_1        D  collectFlow: Finished eating Dessert
